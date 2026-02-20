@@ -11,7 +11,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from datetime import datetime
 CONFIG_FILE = "courses_config.json"
 
-# Глобальные переменные
+
 conn = None
 cursor = None
 menubar = None
@@ -19,7 +19,7 @@ courses_menu = None
 tree = None
 lbl_current_course = None
 
-# Конфигурация курсов
+
 COURSES = {
     "ИСИП": {"file": "isip.db", "table": "deduction"},
     "Юристы": {"file": "lawyers.db", "table": "deduction"},
@@ -32,10 +32,9 @@ window.geometry('1920x1080')
 window.configure(bg='#2d3e50')
 
 
-# ================= ФУНКЦИИ КОНФИГУРАЦИИ =================
+
 
 def load_courses_config():
-    """Загружает сохраненные курсы из файла"""
     global COURSES
     if os.path.exists(CONFIG_FILE):
         try:
@@ -50,7 +49,6 @@ def load_courses_config():
 
 
 def save_courses_config():
-    """Сохраняет пользовательские курсы в файл"""
     standard_courses = {"ИСИП", "Юристы", "БД"}
     user_courses = {name: config for name, config in COURSES.items()
                     if name not in standard_courses}
@@ -61,7 +59,6 @@ def save_courses_config():
 
 
 def rebuild_courses_menu():
-    """Пересоздает меню курсов"""
     global courses_menu
     menubar.delete(1, 'end')
 
@@ -86,10 +83,8 @@ def rebuild_courses_menu():
     courses_menu = new_courses_menu
 
 
-# ================= ЛОГИКА БД =================
 
 def init_databases():
-    """Создает таблицы, если их нет"""
     for course_name, config in COURSES.items():
         db_file = config["file"]
         temp_conn = sqlite3.connect(db_file)
@@ -108,7 +103,6 @@ def init_databases():
 
 
 def switch_database(course_name):
-    """Переключает базу данных"""
     global conn, cursor
 
     if course_name not in COURSES:
@@ -144,10 +138,9 @@ def load_data():
         messagebox.showerror("Ошибка БД", f"Не удалось загрузить данные: {e}")
 
 
-# ================= ФУНКЦИИ ИНТЕРФЕЙСА =================
+
 
 def create_new_database():
-    """Создаёт новую базу"""
     dialog = Toplevel(window)
     dialog.title("Создание новой базы")
     dialog.geometry("350x170")
@@ -202,7 +195,6 @@ def create_new_database():
 
 
 def delete_course(course_name):
-    """Удаляет курс"""
     if course_name in ["ИСИП", "Юристы", "БД"]:
         messagebox.showerror("Ошибка", "Нельзя удалить стандартный курс!")
         return
@@ -360,7 +352,6 @@ def edit_student():
     Button(dialog, text="Отмена", command=dialog.destroy).pack()
 
 def create_report():
-    """Создание отчёта из ТЕКУЩЕЙ активной базы данных"""
     if not conn or not cursor:
         messagebox.showerror("Ошибка", "База данных не выбрана")
         return
@@ -419,7 +410,7 @@ def create_report():
                 elements.append(title)
                 elements.append(Spacer(1, 12))
 
-                # Получаем текущий курс для отчёта
+
                 current_course = lbl_current_course.cget("text")
                 info_text = f"Курс: {current_course}<br/>"
                 info_text += f"Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}<br/>"
@@ -471,13 +462,11 @@ def on_close():
     window.destroy()
 
 
-# ================= СОЗДАНИЕ ИНТЕРФЕЙСА (ОДИН РАЗ!) =================
 
-# 1. Инициализация БД
 init_databases()
 load_courses_config()
 
-# 2. Меню
+
 menubar = Menu(window)
 file_menu = Menu(menubar, tearoff=0)
 file_menu.add_command(label="создать базу", command=create_new_database)
@@ -488,7 +477,7 @@ courses_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label='Курсы', menu=courses_menu)
 window.config(menu=menubar)
 
-# 3. Панель кнопок
+
 header = Frame(window, height=80, bg='#34495e')
 header.pack(fill=X)
 
@@ -507,7 +496,7 @@ buttons = [
 for text, cmd, bg in buttons:
     Button(header, text=text, command=cmd, font=("Arial", 10),bg=bg).pack(side=LEFT, padx=10, pady=15)
 
-# 4. Таблица
+
 columns = ("id", "ФИО", "Телефон", "Дата рождения", "Статус")
 tree = ttk.Treeview(window, columns=columns, show="headings")
 
@@ -517,7 +506,7 @@ for col in columns:
 
 tree.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
-# 5. Финальная настройка
+
 rebuild_courses_menu()
 first_course = list(COURSES.keys())[0]
 switch_database(first_course)

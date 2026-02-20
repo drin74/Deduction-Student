@@ -2,9 +2,9 @@ import sqlite3
 
 
 def create_all_databases():
-    """Создает 3 базы данных с разными студентами для каждого курса"""
 
-    # Студенты ИСИП (Информационные системы и программирование)
+
+
     students_isip = [
         ("Петров Иван Сергеевич", 89031234567, "2004-05-12", "очная"),
         ("Сидорова Мария Александровна", 89037654321, "2005-08-23", "заочная"),
@@ -16,7 +16,7 @@ def create_all_databases():
         ("Федорова Татьяна Игоревна", 89036789432, "2005-04-03", "заочная"),
     ]
 
-    # Студенты Юристы
+
     students_lawyers = [
         ("Алексеева Кристина Сергеевна", 89032223344, "2005-06-28", "очно-заочная"),
         ("Григорьев Максим Денисович", 89031112233, "2004-03-15", "очная"),
@@ -28,7 +28,7 @@ def create_all_databases():
         ("Коновалов Артем Дмитриевич", 89036665544, "2004-08-29", "заочная"),
     ]
 
-    # Студенты БД (Базы данных)
+
     students_bd = [
         ("Лебедев Максим Александрович", 89034443322, "2004-06-11", "очная"),
         ("Кузнецова Дарья Игоревна", 89032221100, "2005-11-05", "очная"),
@@ -38,7 +38,7 @@ def create_all_databases():
         ("Новикова Юлия Андреевна", 89033332211, "2005-05-19", "заочная"),
     ]
 
-    # Словарь баз данных с соответствующими студентами
+
     databases = {
         'isip.db': students_isip,
         'lawyers.db': students_lawyers,
@@ -49,7 +49,7 @@ def create_all_databases():
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
 
-        # Создаем таблицу
+
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS deduction ( 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,10 +60,10 @@ def create_all_databases():
         )
         ''')
 
-        # Очищаем таблицу перед заполнением
+
         cursor.execute("DELETE FROM deduction")
 
-        # Заполняем данными
+
         cursor.executemany(
             'INSERT INTO deduction (name, mobile, birth, status) VALUES (?, ?, ?, ?)',
             students
